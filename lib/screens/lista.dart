@@ -15,7 +15,7 @@ class ListaPilotosState extends State<ListaPilotos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Campeonato pilotos')),
+      appBar: AppBar(title: Text('Cadastro pilotos')),
       body: ListView.builder(
         itemCount: widget._pilotos.length,
         itemBuilder: (context, indice) {
@@ -58,6 +58,6 @@ class ItemPiloto extends StatelessWidget {
         child: ListTile(
             leading: Icon(Icons.person),
             title: Text(_piloto.nomePiloto),
-            subtitle: Text(_piloto.pontuacao.toString())));
+            subtitle: Text(_piloto.nomeUniforme.toString())));
   }
 }

@@ -1,7 +1,13 @@
+import 'package:kart_manager/models/enum_categoria.dart';
+
 class Piloto {
+  final int id;
   final String nomePiloto;
   final String nomeUniforme;
-  final double pontuacao;
 
-  Piloto(this.nomePiloto, this.nomeUniforme, this.pontuacao);
+  Piloto(this.id, this.nomePiloto, this.nomeUniforme);
+
+  String toString() {
+    return 'Piloto{id: $id, nome: $nomePiloto, nomeUniforme: $nomeUniforme}';
+  }
 }
