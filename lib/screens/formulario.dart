@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kart_manager/models/enum_categoria.dart';
+import 'package:kart_manager/database/dao/piloto_dao.dart';
 import 'package:kart_manager/models/piloto.dart';
 import 'package:kart_manager/components/editor.dart';
 
@@ -7,8 +7,8 @@ class FormularioPilotos extends StatelessWidget {
   final TextEditingController _controllerNomePiloto = TextEditingController();
   final TextEditingController _controllerNomeUniforme = TextEditingController();
   final TextEditingController _controllerCategoria = TextEditingController();
-  String dropdownValue = 'F1';
   BuildContext? context = null;
+  final PilotoDao _dao = PilotoDao();
 
   @override
   Widget build(BuildContext context) {
@@ -31,27 +31,17 @@ class FormularioPilotos extends StatelessWidget {
             rotulo: 'Categoria',
             dica: 'F1',
           ),
-          DropdownButton<String>(
-            value: dropdownValue,
-            icon: const Icon(Icons.arrow_downward),
-            elevation: 16,
-            style: const TextStyle(color: Colors.deepPurple),
-            underline: Container(
-              height: 2,
-              color: Colors.deepPurpleAccent,
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: SizedBox(
+              width: double.maxFinite,
+              child: ElevatedButton(
+                child: Text('Salvar'),
+                onPressed: () {
+                  _salvarPiloto();
+                },
+              ),
             ),
-            onChanged: (String? newValue) {
-              (() {
-                dropdownValue = newValue!;
-              });
-            },
-            items: <String>['F1', 'F2', 'F3']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
           )
         ]));
   }
@@ -62,7 +52,10 @@ class FormularioPilotos extends StatelessWidget {
     // final Categoria categoria = _controllerCategoria.toString() as Categoria;
     final pilotoCadastrado = Piloto(0, nomePiloto!, nomeUniforme!);
 
-    Navigator.pop(context!, pilotoCadastrado);
+    _dao
+        .save(pilotoCadastrado)
+        .then((id) => Navigator.pop(context!, pilotoCadastrado));
+
     Scaffold.of(null!).showSnackBar(
         SnackBar(content: Text('Piloto cadastrado com sucesso.')));
   }

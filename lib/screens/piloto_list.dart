@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kart_manager/database/app_database.dart';
+import 'package:kart_manager/database/dao/piloto_dao.dart';
 import 'package:kart_manager/models/piloto.dart';
 import 'package:kart_manager/screens/formulario.dart';
 
@@ -9,25 +9,50 @@ class PilotosList extends StatefulWidget {
 }
 
 class _PilotosListState extends State<PilotosList> {
-  final List<Piloto> pilotos = [];
+  final PilotoDao _dao = PilotoDao();
 
+//TODO refatorar este trecho
+// https://github.com/alura-cursos/flutter-persistencia-interna/blob/crud/lib/screens/contacts_list.dart
   @override
   Widget build(BuildContext context) {
-    pilotos.add(Piloto(0, 'Marcos', 'M.Sousa'));
     return Scaffold(
       appBar: AppBar(
         title: Text('Pilotos'),
       ),
       body: FutureBuilder(
-        future: findAll(),
+        initialData: [],
+        future: _dao.findAll(),
         builder: (context, snapshot) {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              final Piloto piloto = pilotos[index];
-              return _PilotoItem(piloto);
-            },
-            itemCount: pilotos.length,
-          );
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    Text('Loading ...')
+                  ],
+                ),
+              );
+              break;
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              final Object? result = snapshot.data;
+              List<Piloto> pilotos = [];
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  final Piloto piloto = result![index];
+                  return _PilotoItem(piloto);
+                },
+                itemCount: pilotos.length,
+              );
+              break;
+          }
+          return Text('Unknow error');
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -36,7 +61,7 @@ class _PilotosListState extends State<PilotosList> {
               .push(
                 MaterialPageRoute(builder: (context) => FormularioPilotos()),
               )
-              .then((newPiloto) => debugPrint(newPiloto.toString()));
+              .then((newPiloto) => setState(() {}));
         },
         child: Icon(Icons.add),
       ),
